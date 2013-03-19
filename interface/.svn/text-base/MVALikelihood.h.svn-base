@@ -1,0 +1,46 @@
+// ************************************************* 
+// software implementation of the likelihood based
+// Multi-variate analysis technique
+// author: Alexei Raspereza
+// e-mail: Alexei.Raspereza@desy.de
+// last modified : February 3 2011
+// *************************************************
+
+#ifndef DesyHTauTau_MVALikelihood
+#define DesyHTauTau_MVALikelihood
+
+#include "TF1.h"
+#include "TH1.h"
+#include "TFile.h"
+#include "TString.h"
+
+#include <map>
+
+typedef std::vector<double> DoubleVector;
+typedef std::vector<std::string> StringVector;
+typedef std::vector<TString> TStringVector;
+typedef std::vector<TFile*> TFileVector;
+typedef std::map<std::string,TF1*> IndexMap;
+typedef std::map<std::string,IndexMap> PdfVector;
+typedef std::map<std::string,double> StringDoubleMap;
+typedef std::map<std::string,DoubleVector> ProbVector; 
+
+class MVALikelihood {
+
+ public:
+  MVALikelihood(StringVector classNames, StringVector varNames);
+  ~MVALikelihood();
+  double getLikelihood(StringDoubleMap, std::string);
+
+ private:
+
+  unsigned int _numberOfClasses;
+  unsigned int _numberOfVariables;
+  TFileVector _files;
+  StringVector _varNames;
+  StringVector _classNames;
+  TStringVector _classTNames;
+  PdfVector _pdfs;
+};
+
+#endif

@@ -1,0 +1,14 @@
+--- Package MVALikelihood ---
+The MVALikelihood package represents software implementation of the multi-variate analysis (MVA)
+technique based on the likelihood ration method. The method is described in the CMS
+analysis note AN-2010-446. 
+The construction of the likelihood based MVA is realized via C++ class MVALikelihood. It is 
+part of the package DesyHTauTau compliant with the CMSSW design.
+
+The package is accessible via SVN.
+First you have to create directory DesyHTauTau in your CMSSW project area
+cd CMSSW_X_Y_Z/src
+Then you check out package MVALikelihood using SVN:
+co svn co https://svn.cern.ch/reps/desycmshiggs/HiggsToTauTau/trunk/DesyHTauTau/MVALikelihood  
+
+The package 

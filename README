@@ -1,0 +1,126 @@
+---------------------------------------------------------------------------
+------------------------------ Package MVALikelihood ----------------------
+---------------------------------------------------------------------------
+
+The MVALikelihood package represents software implementation of the multi-variate analysis (MVA)
+technique based on the likelihood ration method. The method is described in the CMS
+analysis note AN-2010-446. 
+The construction of the likelihood based MVA is realized via C++ class MVALikelihood. It is 
+part of the package DesyHTauTau compliant with the CMSSW design.
+
+The package is accessible via SVN.
+First, you have to create directory DesyHTauTau in your CMSSW project area
+
+> cd CMSSW_X_Y_Z/src
+> mkdir DesyHTauTau
+
+Then you check out package MVALikelihood in the subdirectory DesyHTauTau using SVN:
+
+> cd DesyHTauTau
+> svn co https://svn.cern.ch/reps/desycmshiggs/HiggsToTauTau/trunk/DesyHTauTau/MVALikelihood  
+
+The package includes design of the MVALikelihood class:
+
+MVALikelihood/interface/MVALikelihood.h
+MVALikelihood/src/MVALikelihood.cc
+
+and C++ program examplifying the usage of the MVALikelihood class:
+
+MVALikelihood/bin/MVALikelihood.cpp.
+
+
+The MVALikelihood class uses probability density functions, modelling 
+distributions of variables discriminating between different event classes. 
+PDFs are stored in the form of TF1* objects in RooT files separately 
+for each event class. It's up to user to construct probability functions 
+for each event class considered and store them in corresponding RooT files. 
+All RooT files with PDFs must have extension .root .
+
+The constructor of the MVALikelihood class requires as an input two parameters:
+1) vector of strings (std::vector<std::string>) with the names of discriminating variables
+2) vector of strings with the names of event classes. 
+
+Probability density functions are uniquely assigned the names of the disciminating variables. 
+The event class names are the names of the corresponding RooT files without extension .root.
+
+In the subdirectory MVALikelihood/bin you find an example C++ program, MVALikelihood.cpp, which  
+illustrates application of MVALikelihood in the analysis of the Z->tautau->mumu 
+channel. In this particular case, the multi-variate analysis is designed to 
+discriminate between Z->tautau->2mu signal and Z/gamma*->mumu background.
+PDFs of discriminating variabes for these two event classes are stored 
+in RooT files "ZToMuMu.root" and "ZToTauTau.root" in the form of TF1 objects. 
+The TF1 objects are given names of the discriminating variables:
+
+o "dcaSig"   - log10 of muon distance of closest approach significance
+o "ptRatio"  - ratio of the dimuon transverse momentum to the scalar sum of
+               muons' momenta
+o "diLepEta" - dimuon pseudo-rapidity
+o "dPhiPos"  - polar angle between momentum of the positive muon and missing
+               transverse momentum  
+
+The usage of MVALikelihood class in the case, described above, is exemplified below:
+
+...
+
+#include "DesyHTauTau/MVALikelihood/interface/MVALikelihood.h"
+
+// the header file defines additional C++ types
+// typedef std::vector<double> DoubleVector;
+// typedef std::vector<std::string> StringVector;
+// typedef std::vector<TString> TStringVector;
+// typedef std::vector<TFile*> TFileVector;
+// typedef std::map<std::string,TF1*> IndexMap;
+// typedef std::map<std::string,IndexMap> PdfVector;
+// typedef std::map<std::string,double> StringDoubleMap;
+// typedef std::map<std::string,DoubleVector> ProbVector; 
+
+
+  StringVector classNames; // Event classes (RooT filenames without .root extension)
+  classNames.clear();
+  classNames.push_back("ZToTauTau"); // Z->TauTau
+  classNames.push_back("ZToMuMu");   // Z->MuMu
+  
+  StringVector variableNames; // Names of discriminating variables
+  variableNames.clear();
+  variableNames.push_back("ptRatio");
+  variableNames.push_back("dcaSig");
+  variableNames.push_back("diLepEta");
+  variableNames.push_back("dPhiPos");
+
+  // MVALikelihood constructor
+  MVALikelihood * mvaLikelihood = new MVALikelihood(classNames,variableNames);	
+
+
+The computation of the likelihhod based on the set of four discriminating variables 
+is provided by the member function MVALikelihood::getLikelihood(StringDoubleMap,std::string). 
+This member function requires as an input variables of type std::map<std::string, double> and
+std::string. The first variable maps discriminating variable names to the current 
+values of discriminating variables. 
+
+    StringDoubleMap variables;
+
+    variables[std::string("ptRatio")] = ptRatio;
+    variables[std::string("dcaSig")]  = dcaSig;
+    variables[std::string("diLepEta")] = diMuEta;
+    variables[std::string("dPhiPos")] = dPhiMuMet;
+    
+
+
+The second input parameter for the MVALikelihood::getLikelihood function is the name of the target event class.
+The likelihood is computed as follows
+
+    float likelihood = float(mvaLikelihood->getLikelihood(variables,"ZToTauTau"));
+
+
+The discriminating variables for each event are readout from Trees contained in the RooT files
+"ZToMuMu_Like.root" (Z->MuMu Monte Carlo) and "ZToTauTau_Like.root" (Z->TauTau Monte Carlo).
+
+The program MVALikelihood.cpp also fills histograms of the discriminating variables and likelihood
+for the two event classes separately and store them in the RooT file named "MVALikelihood.root".
+
+Though in example above we discriminate between two event classes,
+the number of event classes is not limited to two. You can use as many event classes as you wish.
+
+PLEASE NOTE: you have to make sure that RooT files:
+ZToTauTau.root, ZToMuMu.root, ZToTauTau_Like.root and ZToMuMu_Like.root 
+are located in the same directory where you run MVALikelihood executable.

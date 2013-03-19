@@ -1,0 +1,7 @@
+<use   name="rootgraphics"/>
+<use   name="root"/>
+<use   name="rootmath"/>
+<use   name="DesyHTauTau/MVALikelihood"/>
+<bin   name="MVALikelihood" file="MVALikelihood.cpp">
+ <flags   LDFLAGS="-lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lz -pthread -lm -ldl -rdynamic"/>
+</bin>
