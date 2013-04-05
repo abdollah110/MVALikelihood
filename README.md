@@ -79,3 +79,11 @@ How TMVA works:
     theTree->SetBranchAddress("N3_IsoT", &N3_IsoT);
     theTree->SetBranchAddress("N4_IsoT", &N4_IsoT);
     theTree->SetBranchAddress("N_MET", &N_MET);
+    
+//Run Over the Tree
+
+    for (Long64_t ievt = 0; ievt < theTree->GetEntries(); ievt++) {
+
+        theTree->GetEntry(ievt);
+                    histBdt ->Fill(reader->EvaluateMVA("BDT method"));
+    }    
