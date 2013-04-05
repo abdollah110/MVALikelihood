@@ -37,8 +37,8 @@ cmsenv (this create an executable MVALikelihood which is located in the bin dire
 to run it just run:   MVALikelihood
 
 
-############################################################
-############################################################
+//############################################################
+//############################################################
 How TMVA works:
 
 // --- Create the Reader object
@@ -85,5 +85,11 @@ How TMVA works:
     for (Long64_t ievt = 0; ievt < theTree->GetEntries(); ievt++) {
 
         theTree->GetEntry(ievt);
-                    histBdt ->Fill(reader->EvaluateMVA("BDT method"));
+        histBdt ->Fill(reader->EvaluateMVA("BDT method"));
     }    
+    
+// --- Write histograms
+
+    TFile *target = new TFile("TMVApp.root", "RECREATE");
+    histBdt ->Write();
+    target->Close();
