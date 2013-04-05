@@ -36,3 +36,28 @@ cmsenv (this create an executable MVALikelihood which is located in the bin dire
 
 to run it just run:   MVALikelihood
 
+
+############################################################
+############################################################
+How TMVA works:
+
+// --- Create the Reader object
+    TMVA::Reader *reader = new TMVA::Reader("!Color:!Silent");
+    
+// Create a set of variables and declare them to the reader
+// - the variable names MUST corresponds in name and type to those given in the weight file(s) used
+
+    Float_t N3_Pt, N4_Pt, N_MET;
+    Float_t N3_IsoT, N4_IsoT;
+    reader->AddVariable("N3_Pt", &N3_Pt);
+    reader->AddVariable("N4_Pt", &N4_Pt);
+    reader->AddVariable("N3_IsoT", &N3_IsoT);
+    reader->AddVariable("N4_IsoT", &N4_IsoT);
+    reader->AddVariable("N_MET", &N_MET);
+    
+// --- Book the MVA methods
+
+    reader->BookMVA(methodName, weightfile);
+
+
+
