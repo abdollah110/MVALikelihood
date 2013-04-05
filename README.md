@@ -42,6 +42,7 @@ to run it just run:   MVALikelihood
 How TMVA works:
 
 // --- Create the Reader object
+
     TMVA::Reader *reader = new TMVA::Reader("!Color:!Silent");
     
 // Create a set of variables and declare them to the reader
@@ -58,6 +59,23 @@ How TMVA works:
 // --- Book the MVA methods
 
     reader->BookMVA(methodName, weightfile);
+    
+// Book output histogramm
 
+    TH1F * histBdt = new TH1F("MVA_BDT", "MVA_BDT", nbin, -0.8, 0.8);    
 
+// Prepare input tree (this must be replaced by your data source)
+    
+    TFile * input(0);
+    TString fname = "./mvaRed.root";
+    input = TFile::Open(fname); // check if file in local directory exists
 
+// Prepare the event tree
+  
+    TTree* theTree = (TTree*) input->Get("MVATree");
+  
+    theTree->SetBranchAddress("N3_Pt", &N3_Pt);
+    theTree->SetBranchAddress("N4_Pt", &N4_Pt);
+    theTree->SetBranchAddress("N3_IsoT", &N3_IsoT);
+    theTree->SetBranchAddress("N4_IsoT", &N4_IsoT);
+    theTree->SetBranchAddress("N_MET", &N_MET);
